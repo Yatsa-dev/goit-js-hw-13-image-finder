@@ -9,15 +9,27 @@ const newsApiService = new NewsApiService();
 const refs = {
     searchForm: document.querySelector('#search-form'),
     galleryContainer: document.querySelector('.gallery'),
+    add: document.querySelector('.add')
 };
+refs.add.addEventListener('click', () => {
+    newsApiService.fetchApi().then(r => console.log(r.data.hits))
 
+})
 refs.searchForm.addEventListener('submit', onSearch)
 
 function onSearch(event) {
     event.preventDefault();
+
+
     newsApiService.query = event.currentTarget.elements.searchQuery.value;
+    newsApiService.resetPage()
+
+    if (!newsApiService.query.trim()) {
+        Notify.failure('Please try again',
+            { fontFamily: "Quicksand", useGoogleFont: true, closeButton: true, rtl: true, useIcon: true, });
+    }
     newsApiService.fetchApi().then(response => {
-        this.page += 1;
+
         if (response.data.totalHits === 0) {
             Notify.failure('Sorry, there are no images matching your search query. Please try again',
                 { fontFamily: "Quicksand", useGoogleFont: true, closeButton: true, rtl: true, useIcon: true, });
@@ -29,10 +41,13 @@ function onSearch(event) {
             Notify.success(`Hooray! We found ${response.data.totalHits} images`,
                 { fontFamily: "Quicksand", useGoogleFont: true, timeout: 3000, });
         }
-    });
 
+    }).finally(refs.galleryContainer.innerHTML = '',
+        newsApiService.query.trim());
 
     clearSearchField()
+
+
 
 }
 
@@ -48,8 +63,6 @@ function renderImageCard(response) {
 }
 function clearSearchField() {
     refs.galleryContainer.innerHTML = '';
-
-
 }
 // function onSearch(event) {
 //     event.preventDefault();
