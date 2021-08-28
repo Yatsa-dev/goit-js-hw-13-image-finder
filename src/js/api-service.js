@@ -2,13 +2,6 @@ import axios from 'axios';
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '23103282-e7d496618b624ef4484ab3d5c';
 
-const options = {
-    headers: {
-        Authorization: API_KEY,
-    }
-}
-
-
 export default class NewsApiService {
     constructor() {
         this.searchQuery = '';
@@ -16,19 +9,21 @@ export default class NewsApiService {
     };
     fetchApi() {
         this.page += 1;
-        // const searchParams = new URLSearchParams({
-        //     q: this.searchQuery,
-        //     page: this.page,
-        //     per_page: 40,
-        //     image_type: photo,
-        //     orientation: horizontal,
-        //     safesearch: true
-        // })
-        return axios.get(`${BASE_URL}?key=${API_KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=40`);
+        const searchParams = new URLSearchParams({
+            q: this.searchQuery,
+            page: this.page,
+            per_page: '40',
+            image_type: 'photo',
+            orientation: 'horizontal',
+            safesearch: 'true'
+        })
+
+        const url = `${BASE_URL}?key=${API_KEY}&${searchParams}`;
+        return axios.get(url);
     };
 
     get query() {
-        return this.searchQuery;
+        return this.searchQuery.trim();
     };
     set query(newQuery) {
         this.searchQuery = newQuery;
