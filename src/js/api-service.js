@@ -12,7 +12,7 @@ export default class NewsApiService {
         const searchParams = new URLSearchParams({
             q: this.searchQuery,
             page: this.page,
-            per_page: '40',
+            per_page: '20',
             image_type: 'photo',
             orientation: 'horizontal',
             safesearch: 'true'
