@@ -1,26 +1,27 @@
 'use stricts';
-import { Notify } from "notiflix";
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import InfiniteScroll from 'infinite-scroll';
+import { Notify } from 'notiflix';
 import imageTemplates from './templates/image-card.hbs';
 import NewsApiService from './js/api-service';
 import './css/styles.css';
 
-const newsApiService = new NewsApiService();
 
+const newsApiService = new NewsApiService();
 
 const refs = {
     searchForm: document.querySelector('#search-form'),
     galleryContainer: document.querySelector('.gallery'),
-    add: document.querySelector('.add')
+    add: document.querySelector('.add'),
+    sentinel: document.querySelector('#sentinel'),
 };
 refs.add.addEventListener('click', onLoadMore)
 refs.searchForm.addEventListener('submit', onSearch)
 
 
-new SimpleLightbox('.gallery a');
-
 function onSearch(event) {
+
     event.preventDefault();
 
     newsApiService.query = event.currentTarget.elements.searchQuery.value;
@@ -40,15 +41,16 @@ function onSearch(event) {
             const markup = (response.data.hits)
                 .map(el => renderImageCard(el))
                 .join('')
+            new SimpleLightbox(".gallery a");
             refs.galleryContainer.insertAdjacentHTML('beforeend', markup);
-
             Notify.success(`Hooray! We found ${result} images`,
                 { fontFamily: "Quicksand", useGoogleFont: true, timeout: 3000, });
         }
 
-    }).finally(refs.galleryContainer.innerHTML = '');
+    }).finally(refs.galleryContainer.innerHTML = '')
 
     clearSearchField()
+
 }
 function renderImageCard(image) {
     refs.galleryContainer.insertAdjacentHTML('beforeend', imageTemplates(image));
@@ -61,6 +63,11 @@ function onLoadMore() {
         const markup = (response.data.hits)
             .map(el => renderImageCard(el))
             .join('')
+        let lightbox = new SimpleLightbox(".gallery a")
+        lightbox.refresh()
         refs.galleryContainer.insertAdjacentHTML('beforeend', markup);
     })
+
+
 }
+
