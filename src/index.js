@@ -75,7 +75,7 @@ const onEntry = entries => {
     });
 };
 const observer = new IntersectionObserver(onEntry, {
-    rootMargin: '50px',
+    rootMargin: '100px',
     threshold: 0.5,
 });
 observer.observe(refs.sentinel);
