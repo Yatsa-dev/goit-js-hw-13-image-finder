@@ -82,3 +82,29 @@ observer.observe(refs.sentinel);
 
 
 
+// const target = document.querySelectorAll("a");
+
+// const scrollToTopBtn = document.querySelector(".scrollToTopBtn")
+
+// function callback(entries) {
+
+//     entries.forEach(entry => {
+//         if (entry.isIntersecting) {
+
+//             scrollToTopBtn.classList.add("showBtn")
+//         } else {
+
+//             scrollToTopBtn.classList.remove("showBtn")
+//         }
+//     });
+// }
+// function scrollToTop() {
+//     rootElement.scrollTo({
+//         top: 0,
+//         behavior: "smooth"
+//     })
+// }
+// scrollToTopBtn.addEventListener("click", scrollToTop);
+// const observer2 = new IntersectionObserver(callback);
+// observer2.observe(target);
+
