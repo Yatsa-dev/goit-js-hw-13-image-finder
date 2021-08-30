@@ -1,27 +1,23 @@
 'use stricts';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import InfiniteScroll from 'infinite-scroll';
 import { Notify } from 'notiflix';
 import imageTemplates from './templates/image-card.hbs';
 import NewsApiService from './js/api-service';
 import './css/styles.css';
 
-
 const newsApiService = new NewsApiService();
+let Lightbox = new SimpleLightbox(".gallery a");
 
 const refs = {
     searchForm: document.querySelector('#search-form'),
     galleryContainer: document.querySelector('.gallery'),
-    add: document.querySelector('.add'),
     sentinel: document.querySelector('#sentinel'),
 };
-refs.add.addEventListener('click', onLoadMore)
+
 refs.searchForm.addEventListener('submit', onSearch)
 
-
 function onSearch(event) {
-
     event.preventDefault();
 
     newsApiService.query = event.currentTarget.elements.searchQuery.value;
@@ -41,8 +37,8 @@ function onSearch(event) {
             const markup = (response.data.hits)
                 .map(el => renderImageCard(el))
                 .join('')
-            new SimpleLightbox(".gallery a");
             refs.galleryContainer.insertAdjacentHTML('beforeend', markup);
+            Lightbox.refresh()
             Notify.success(`Hooray! We found ${result} images`,
                 { fontFamily: "Quicksand", useGoogleFont: true, timeout: 3000, });
         }
@@ -58,16 +54,31 @@ function renderImageCard(image) {
 function clearSearchField() {
     refs.galleryContainer.innerHTML = '';
 }
-function onLoadMore() {
-    newsApiService.fetchApi().then(response => {
-        const markup = (response.data.hits)
-            .map(el => renderImageCard(el))
-            .join('')
-        let lightbox = new SimpleLightbox(".gallery a")
-        lightbox.refresh()
-        refs.galleryContainer.insertAdjacentHTML('beforeend', markup);
-    })
+const onEntry = entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && newsApiService.query !== '') {
+            newsApiService.fetchApi().then(response => {
+                const markup = (response.data.hits)
+                    .map(el => renderImageCard(el))
+                    .join('')
+                Lightbox.refresh()
+                refs.galleryContainer.insertAdjacentHTML('beforeend', markup);
+                newsApiService.incrementPage();
+                const { height: cardHeight } = refs.galleryContainer
+                    .firstElementChild.getBoundingClientRect();
+                window.scrollBy({
+                    top: cardHeight * 2,
+                    behavior: 'smooth',
+                });
+            });
+        }
+    });
+};
+const observer = new IntersectionObserver(onEntry, {
+    rootMargin: '50px',
+    threshold: 0.5,
+});
+observer.observe(refs.sentinel);
 
 
-}
 

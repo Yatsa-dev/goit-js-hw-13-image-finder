@@ -8,11 +8,11 @@ export default class NewsApiService {
         this.page = 0;
     };
     fetchApi() {
-        this.page += 1;
+        this.incrementPage()
         const searchParams = new URLSearchParams({
             q: this.searchQuery,
             page: this.page,
-            per_page: '20',
+            per_page: '12',
             image_type: 'photo',
             orientation: 'horizontal',
             safesearch: 'true'
@@ -30,5 +30,8 @@ export default class NewsApiService {
     }
     resetPage() {
         this.page = 0;
+    }
+    incrementPage() {
+        this.page += 1;
     }
 }
