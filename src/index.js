@@ -13,9 +13,13 @@ const refs = {
     searchForm: document.querySelector('#search-form'),
     galleryContainer: document.querySelector('.gallery'),
     sentinel: document.querySelector('#sentinel'),
+    targetElemForButtonUp: document.querySelector(".button"),
+    scrollToTopBtn: document.querySelector(".scrollToTopBtn"),
+    rootElement: document.documentElement
 };
 
 refs.searchForm.addEventListener('submit', onSearch)
+refs.scrollToTopBtn.addEventListener("click", scrollToTop);
 
 function onSearch(event) {
     event.preventDefault();
@@ -81,30 +85,25 @@ const observer = new IntersectionObserver(onEntry, {
 observer.observe(refs.sentinel);
 
 
+function showButtonUpByClassList(entries) {
 
-// const target = document.querySelectorAll("a");
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            refs.scrollToTopBtn.classList.remove("showBtn")
+        } else {
+            refs.scrollToTopBtn.classList.add("showBtn")
+        }
+    });
+}
+function scrollToTop() {
+    refs.rootElement.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    })
+}
 
-// const scrollToTopBtn = document.querySelector(".scrollToTopBtn")
-
-// function callback(entries) {
-
-//     entries.forEach(entry => {
-//         if (entry.isIntersecting) {
-
-//             scrollToTopBtn.classList.add("showBtn")
-//         } else {
-
-//             scrollToTopBtn.classList.remove("showBtn")
-//         }
-//     });
-// }
-// function scrollToTop() {
-//     rootElement.scrollTo({
-//         top: 0,
-//         behavior: "smooth"
-//     })
-// }
-// scrollToTopBtn.addEventListener("click", scrollToTop);
-// const observer2 = new IntersectionObserver(callback);
-// observer2.observe(target);
+const observerUp = new IntersectionObserver(showButtonUpByClassList, {
+    threshold: 0.01
+});
+observerUp.observe(refs.targetElemForButtonUp);
 
